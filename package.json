@@ -19,7 +19,8 @@
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
-    "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
+    "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
+    "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -46,6 +47,7 @@
     "supertest": "^7.0.0",
     "typescript": "^6.0.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.2",
+    "prisma": "8.0.0-rc.17"
   }
 }
