@@ -1,58 +1,173 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+
+import { PrismaService } from '../../config/prisma/prisma.service.js';
+import { AllProductResponse } from './dto/product-response.js';
 
 export type Product = {
-    id: number;
-    name: string;
-    price: number;
-    image: string;
-    description: string;
-    rating: number;
-}
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  description: string;
+  rating: number;
+};
+
 @Injectable()
 export class ProductService {
-    private products: Product[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-    getAllProducts(): Product[] {
-        return this.products;
+  // =========================
+  // GET ALL PRODUCTS
+  // =========================
+  async getAllProducts(): Promise<AllProductResponse> {
+    try {
+      return {
+        products: await this.prisma.product.findMany({
+          orderBy: {
+            id: 'asc',
+          },
+        }),
+      };
+    } catch (error) {
+      console.error('Error fetching products:', error);
+
+      throw new InternalServerErrorException(
+        'Failed to fetch products',
+      );
     }
+  }
 
-    getProductById(id: number): Product | undefined {
-        return this.products.find(product => product.id === id);
+  // =========================
+  // GET PRODUCT BY ID
+  // =========================
+  async getProductById(id: number): Promise<Product> {
+    try {
+      const product = await this.prisma.product.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!product) {
+        throw new NotFoundException(
+          `Product with ID ${id} not found`,
+        );
+      }
+
+      return product;
+    } catch (error) {
+      // Preserve NestJS 404 exception
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      console.error(
+        `Error fetching product ${id}:`,
+        error,
+      );
+
+      throw new InternalServerErrorException(
+        'Failed to fetch product',
+      );
     }
+  }
 
-    createProduct(product: Product): Product {
-        const newId = this.products.length + 1;
-        const newProduct = { ...product, id: newId };
+  // =========================
+  // CREATE PRODUCT
+  // =========================
+  async createProduct(
+    product: Omit<Product, 'id'>,
+  ): Promise<Product> {
+    try {
+      return await this.prisma.product.create({
+        data: {
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          description: product.description,
+          rating: product.rating,
+        },
+      });
+    } catch (error) {
+      console.error('Error creating product:', error);
 
-        this.products.push(newProduct);
-
-        return newProduct;
+      throw new InternalServerErrorException(
+        'Failed to create product',
+      );
     }
+  }
 
-    updateProduct(id: number, updatedProduct: Product): Product | undefined {
-        const existingProduct = this.getProductById(id);
+  // =========================
+  // UPDATE PRODUCT
+  // =========================
+  async updateProduct(
+    id: number,
+    updatedProduct: Omit<Product, 'id'>,
+  ): Promise<Product> {
+    try {
+      // Check if product exists
+      await this.getProductById(id);
 
-        if (existingProduct) {
-            // Update the existing product with the new data
-            existingProduct.name = updatedProduct.name;
-            existingProduct.price = updatedProduct.price;
-            existingProduct.image = updatedProduct.image;
-            existingProduct.description = updatedProduct.description;
-            existingProduct.rating = updatedProduct.rating;
-        }
-        else{
-            throw new NotFoundException(`Product with ID ${id} not found`);
-        }
-        return existingProduct;
+      return await this.prisma.product.update({
+        where: {
+          id,
+        },
+        data: {
+          name: updatedProduct.name,
+          price: updatedProduct.price,
+          image: updatedProduct.image,
+          description: updatedProduct.description,
+          rating: updatedProduct.rating,
+        },
+      });
+    } catch (error) {
+      // Preserve NestJS 404 exception
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      console.error(
+        `Error updating product ${id}:`,
+        error,
+      );
+
+      throw new InternalServerErrorException(
+        'Failed to update product',
+      );
     }
+  }
 
-    deleteProduct(id: number): void {
-        const index = this.products.findIndex(product => product.id === id);
-        if (index !== -1) {
-            this.products.splice(index, 1);
-        } else {
-            throw new NotFoundException(`Product with ID ${id} not found`);
-        }
+  // =========================
+  // DELETE PRODUCT
+  // =========================
+  async deleteProduct(id: number): Promise<void> {
+    try {
+      // Check if product exists
+      await this.getProductById(id);
+
+      await this.prisma.product.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      // Preserve NestJS 404 exception
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      console.error(
+        `Error deleting product ${id}:`,
+        error,
+      );
+
+      throw new InternalServerErrorException(
+        'Failed to delete product',
+      );
     }
-
+  }
 }
