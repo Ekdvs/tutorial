@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -14,6 +15,7 @@ import {
   ProductService,
 } from './product.service.js';
 import { AllProductResponse } from './dto/product-response.js';
+import { JwtguardGuard } from '../../guard/jwtguard/jwtguard.guard.js';
 
 @Controller('product')
 export class ProductController {
@@ -26,6 +28,7 @@ export class ProductController {
     return this.productService.getAllProducts();
   }
 
+  @UseGuards(JwtguardGuard)
   @Get('get-product/:productId')
   getProductById(
     @Param('productId', ParseIntPipe) productId: number,
