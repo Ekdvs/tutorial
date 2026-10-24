@@ -6,6 +6,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { ProductModule } from './api/product/product.module.js';
 import { UserModule } from './api/user/user.module.js';
+import { CacheModule } from '@nestjs/cache-manager';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -18,6 +19,11 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ProductModule,
 
     UserModule,
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 1000*5, 
+      max: 1000*10,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

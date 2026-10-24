@@ -14,12 +14,14 @@ import { Product, ProductService } from './product.service.js';
 import { AllProductResponse } from './dto/product-response.js';
 import { JwtGuard } from '../../guard/jwtguard/jwtguard.guard.js';
 import { Roles } from '../../decorator/roles/roles.decorator.js';
+import { Public } from '../../decorator/public/public.decorator.js';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Roles(['ADMIN', 'USER'])
+  //@Roles(['ADMIN', 'USER'])
+  @Public()
   @Get('all-products')
   getAllProducts(): Promise<AllProductResponse> {
     return this.productService.getAllProducts();

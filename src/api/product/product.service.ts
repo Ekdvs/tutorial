@@ -1,4 +1,5 @@
 import {
+    Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -6,6 +7,7 @@ import {
 
 import { PrismaService } from '../../config/prisma/prisma.service.js';
 import { AllProductResponse } from './dto/product-response.js';
+import type { Cache } from 'cache-manager';
 
 export type Product = {
   id: number;
@@ -18,27 +20,51 @@ export type Product = {
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService,@Inject('CACHE_MANAGER') private readonly cacheManager: Cache) {}
 
   // =========================
   // GET ALL PRODUCTS
   // =========================
   async getAllProducts(): Promise<AllProductResponse> {
-    try {
-      return {
-        products: await this.prisma.product.findMany({
-          orderBy: {
-            id: 'asc',
-          },
-        }),
-      };
-    } catch (error) {
-      console.error('Error fetching products:', error);
+  const cacheKey = 'all-products';
 
-      throw new InternalServerErrorException('Failed to fetch products');
-    }
+  try {
+    // 1. Check cache first
+    /*const cachedProducts =
+      await this.cacheManager.get<AllProductResponse>(cacheKey);
+
+    if (cachedProducts) {
+      console.log('Returning products from cache');
+      return cachedProducts;
+    }*/
+
+    // 2. Fetch products from database
+    const products = await this.prisma.product.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
+
+    // 3. Create response
+    const response: AllProductResponse = {
+      products,
+    };
+
+    // 4. Save response in cache (TTL: 60 seconds)
+    //await this.cacheManager.set(cacheKey, response, 60_000);
+
+    //console.log('Returning products from database');
+
+    // 5. Return response
+    return response;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+
+    throw new InternalServerErrorException(
+      'Failed to fetch products',
+    );
   }
-
+}
   // =========================
   // GET PRODUCT BY ID
   // =========================
