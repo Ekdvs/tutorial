@@ -35,9 +35,7 @@ export class ProductService {
     } catch (error) {
       console.error('Error fetching products:', error);
 
-      throw new InternalServerErrorException(
-        'Failed to fetch products',
-      );
+      throw new InternalServerErrorException('Failed to fetch products');
     }
   }
 
@@ -53,9 +51,7 @@ export class ProductService {
       });
 
       if (!product) {
-        throw new NotFoundException(
-          `Product with ID ${id} not found`,
-        );
+        throw new NotFoundException(`Product with ID ${id} not found`);
       }
 
       return product;
@@ -65,23 +61,16 @@ export class ProductService {
         throw error;
       }
 
-      console.error(
-        `Error fetching product ${id}:`,
-        error,
-      );
+      console.error(`Error fetching product ${id}:`, error);
 
-      throw new InternalServerErrorException(
-        'Failed to fetch product',
-      );
+      throw new InternalServerErrorException('Failed to fetch product');
     }
   }
 
   // =========================
   // CREATE PRODUCT
   // =========================
-  async createProduct(
-    product: Omit<Product, 'id'>,
-  ): Promise<Product> {
+  async createProduct(product: Omit<Product, 'id'>): Promise<Product> {
     try {
       return await this.prisma.product.create({
         data: {
@@ -95,9 +84,7 @@ export class ProductService {
     } catch (error) {
       console.error('Error creating product:', error);
 
-      throw new InternalServerErrorException(
-        'Failed to create product',
-      );
+      throw new InternalServerErrorException('Failed to create product');
     }
   }
 
@@ -130,14 +117,9 @@ export class ProductService {
         throw error;
       }
 
-      console.error(
-        `Error updating product ${id}:`,
-        error,
-      );
+      console.error(`Error updating product ${id}:`, error);
 
-      throw new InternalServerErrorException(
-        'Failed to update product',
-      );
+      throw new InternalServerErrorException('Failed to update product');
     }
   }
 
@@ -160,14 +142,9 @@ export class ProductService {
         throw error;
       }
 
-      console.error(
-        `Error deleting product ${id}:`,
-        error,
-      );
+      console.error(`Error deleting product ${id}:`, error);
 
-      throw new InternalServerErrorException(
-        'Failed to delete product',
-      );
+      throw new InternalServerErrorException('Failed to delete product');
     }
   }
 }

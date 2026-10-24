@@ -18,10 +18,6 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     ProductModule,
 
     UserModule,
-
-
-    
-    
   ],
   controllers: [AppController],
   providers: [AppService],

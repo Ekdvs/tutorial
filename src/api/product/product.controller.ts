@@ -10,25 +10,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import {
-  Product,
-  ProductService,
-} from './product.service.js';
+import { Product, ProductService } from './product.service.js';
 import { AllProductResponse } from './dto/product-response.js';
-import { JwtguardGuard } from '../../guard/jwtguard/jwtguard.guard.js';
+import { JwtGuard } from '../../guard/jwtguard/jwtguard.guard.js';
 
 @Controller('product')
 export class ProductController {
-  constructor(
-    private readonly productService: ProductService,
-  ) {}
+  constructor(private readonly productService: ProductService) {}
 
   @Get('all-products')
   getAllProducts(): Promise<AllProductResponse> {
     return this.productService.getAllProducts();
   }
 
-  @UseGuards(JwtguardGuard)
+  //@UseGuards(JwtGuard)
   @Get('get-product/:productId')
   getProductById(
     @Param('productId', ParseIntPipe) productId: number,
@@ -39,9 +34,7 @@ export class ProductController {
   }
 
   @Post('add-product')
-  createProduct(
-    @Body() product: Omit<Product, 'id'>,
-  ): Promise<Product> {
+  createProduct(@Body() product: Omit<Product, 'id'>): Promise<Product> {
     console.log('product:', product);
 
     return this.productService.createProduct(product);
@@ -52,10 +45,7 @@ export class ProductController {
     @Param('productId', ParseIntPipe) productId: number,
     @Body() product: Omit<Product, 'id'>,
   ): Promise<Product> {
-    return this.productService.updateProduct(
-      productId,
-      product,
-    );
+    return this.productService.updateProduct(productId, product);
   }
 
   @Delete('delete-product/:productId')

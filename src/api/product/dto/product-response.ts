@@ -1,5 +1,5 @@
-import { Product } from "../../../generated/prisma/client.js";
+import { Product } from '../../../generated/prisma/client.js';
 
 export class AllProductResponse {
-    products :Product[]
+  products: Product[];
 }

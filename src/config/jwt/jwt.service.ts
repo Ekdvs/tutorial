@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   InternalServerErrorException,
@@ -15,33 +14,23 @@ export interface JwtPayload {
 export class JwtAuthService {
   private readonly logger = new Logger(JwtAuthService.name);
 
-  constructor(
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly jwtService: JwtService) {}
 
-  async generateToken(
-    payload: JwtPayload,
-  ): Promise<string> {
+  async generateToken(payload: JwtPayload): Promise<string> {
     try {
       return await this.jwtService.signAsync(payload);
     } catch (error) {
       this.logger.error('Failed to generate JWT');
 
-      throw new InternalServerErrorException(
-        'Failed to generate token',
-      );
+      throw new InternalServerErrorException('Failed to generate token');
     }
   }
 
   async verifyToken(token: string): Promise<JwtPayload> {
     try {
-      return await this.jwtService.verifyAsync<JwtPayload>(
-        token,
-      );
+      return await this.jwtService.verifyAsync<JwtPayload>(token);
     } catch {
-      throw new InternalServerErrorException(
-        'Token verification failed',
-      );
+      throw new InternalServerErrorException('Token verification failed');
     }
   }
 }

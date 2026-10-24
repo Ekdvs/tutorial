@@ -1,4 +1,3 @@
-
 import {
   CanActivate,
   ExecutionContext,
@@ -9,7 +8,7 @@ import { Request } from 'express';
 import { JwtAuthService } from '../../config/jwt/jwt.service.js';
 
 @Injectable()
-export class JwtguardGuard implements CanActivate {
+export class JwtGuard implements CanActivate {
   constructor(private readonly jwtService: JwtAuthService) {}
 
   canActivate(context: ExecutionContext): boolean {
@@ -18,7 +17,9 @@ export class JwtguardGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Missing or invalid authorization header');
+      throw new UnauthorizedException(
+        'Missing or invalid authorization header',
+      );
     }
 
     const token = authHeader.split(' ')[1];
