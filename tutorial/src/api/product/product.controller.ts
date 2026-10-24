@@ -17,6 +17,7 @@ import { JwtGuard } from '../../guard/jwtguard/jwtguard.guard.js';
 import { Roles } from '../../decorator/roles/roles.decorator.js';
 import { Public } from '../../decorator/public/public.decorator.js';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { NoCache } from '../../decorator/no-cache/no-cache.decorator.js';
 
 @Controller('product')
 export class ProductController {
@@ -26,7 +27,9 @@ export class ProductController {
   @Public()
   @Get('all-products')
   //@UseInterceptors(CacheInterceptor)
+  //@NoCache()
   getAllProducts(): Promise<AllProductResponse> {
+    
     return this.productService.getAllProducts();
   }
 

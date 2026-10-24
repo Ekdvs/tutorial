@@ -53,7 +53,7 @@ export class ProductService {
     // 4. Save response in cache (TTL: 60 seconds)
     //await this.cacheManager.set(cacheKey, response, 60_000);
 
-    //console.log('Returning products from database');
+    console.log('Returning products from database');
 
     // 5. Return response
     return response;

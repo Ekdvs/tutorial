@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ConfigModule } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
+import { NoCacheInterceptor } from './interceptor/no-cache.interceptor.js';
 import { createObserveModule } from '@nestjs/observe';
-import {
-  CacheInterceptor,
-  CacheModule,
-} from '@nestjs/cache-manager';
+
 
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { ProductModule } from './api/product/product.module.js';
 import { UserModule } from './api/user/user.module.js';
+import { ConfigModule } from '@nestjs/config';
 
 export const { ObserveModule, ObserveInstrument } =
   createObserveModule();
@@ -37,7 +36,7 @@ export const { ObserveModule, ObserveInstrument } =
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
+      useClass: NoCacheInterceptor,
     },
   ],
 })
