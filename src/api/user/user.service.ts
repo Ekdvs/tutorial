@@ -71,7 +71,9 @@ export class UserService {
       const token = await this.jwtAuthSeervice.generateToken({
         sub: user.id,
         username: user.username,
+        role: "USER" // Include the user's role in the token payload
         
+
       });
 
       return {

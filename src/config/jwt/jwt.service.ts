@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 export interface JwtPayload {
   sub: number;
   username: string;
+  role: string; // Include the user's role in the payload
 }
 
 @Injectable()
