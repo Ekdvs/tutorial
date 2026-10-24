@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { Product, ProductService } from './product.service.js';
@@ -15,6 +16,7 @@ import { AllProductResponse } from './dto/product-response.js';
 import { JwtGuard } from '../../guard/jwtguard/jwtguard.guard.js';
 import { Roles } from '../../decorator/roles/roles.decorator.js';
 import { Public } from '../../decorator/public/public.decorator.js';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('product')
 export class ProductController {
@@ -23,12 +25,14 @@ export class ProductController {
   //@Roles(['ADMIN', 'USER'])
   @Public()
   @Get('all-products')
+  //@UseInterceptors(CacheInterceptor)
   getAllProducts(): Promise<AllProductResponse> {
     return this.productService.getAllProducts();
   }
 
   //@UseGuards(JwtGuard)
   @Get('get-product/:productId')
+  
   getProductById(
     @Param('productId', ParseIntPipe) productId: number,
   ): Promise<Product> {
