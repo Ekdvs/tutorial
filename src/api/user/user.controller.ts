@@ -13,6 +13,9 @@ import { UserService } from './user.service.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
 import { LoginUserDto } from './dto/login-user.dto.js';
+import { Public } from '../../decorator/public/public.decorator.js';
+import { Role } from '../../common/enums/role.enum.js';
+import { Roles } from '../../decorator/roles/roles.decorator.js';
 
 @Controller('user')
 export class UserController {
@@ -27,12 +30,15 @@ export class UserController {
   register(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
+
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   login(@Body() loginUserDto: LoginUserDto) {
     return this.userService.login(loginUserDto);
   }
 
+  @Roles([Role.ADMIN])
   @Get()
   findAll() {
     return this.userService.findAll();

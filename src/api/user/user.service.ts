@@ -71,6 +71,7 @@ export class UserService {
       const token = await this.jwtAuthSeervice.generateToken({
         sub: user.id,
         username: user.username,
+        
       });
 
       return {
